@@ -1,0 +1,25 @@
+# Compiled class files
+# *.class
+# bin/
+# build/
+# out/
+
+# Application specific
+# output/
+
+# IDE - VS Code
+.vscode/
+
+# IDE - Eclipse
+.classpath
+.project
+.settings/
+
+# IDE - IntelliJ
+.idea/
+*.iml
+*.iws
+
+# OS Generated
+.DS_Store
+Thumbs.db
