@@ -1,10 +1,12 @@
 ========== RECEIPT ==========
 Apple Laptop         x1  INR 85,000.00
+Samsung Activity Band x13 INR 58,500.00
+Samsung Sport Watch  x1  INR 22,000.00
 -----------------------------
-Subtotal:               INR 85,000.00
-Discount (MYFIRST60):        -INR 51,000.00
+Subtotal:               INR 165,500.00
+Tax (10%):              INR 16,550.00
 -----------------------------
-Total:                  INR 34,000.00
+Total:                  INR 182,050.00
 =============================
          THANK YOU :)        
 =============================

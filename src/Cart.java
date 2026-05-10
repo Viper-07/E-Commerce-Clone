@@ -9,14 +9,29 @@ public class Cart {
         this.items = new ArrayList<>();
     }
 
-    public void addItem(Product product, int quantity) {
+    public String addItem(Product product, int quantity) {
+        if (quantity < 0) {
+            return "error 'Quantity must be positive'";
+        }
+        if (quantity == 0) {
+            return "error 'Quantity must be at least 1'";
+        }
+        if (!product.hasEnoughStock(quantity)) {
+            return "error 'Insufficient stock. Available: " + product.getStock() + "'";
+        }
+
         for (CartItem item : items) {
             if (item.getProduct().getId().equalsIgnoreCase(product.getId())) {
-                item.setQuantity(item.getQuantity() + quantity);
-                return;
+                int newQty = item.getQuantity() + quantity;
+                if (newQty > product.getStock()) {
+                    return "error 'Insufficient stock. Available: " + product.getStock() + "'";
+                }
+                item.setQuantity(newQty);
+                return "Success";
             }
         }
         items.add(new CartItem(product, quantity));
+        return "Success";
     }
 
     public boolean removeItem(String productId) {
@@ -27,8 +42,19 @@ public class Cart {
         return items;
     }
 
-    public void applyCoupon(Coupon coupon) {
+    public Coupon getAppliedCoupon() {
+        return appliedCoupon;
+    }
+
+    public String applyCoupon(Coupon coupon) {
+        if (coupon == null) {
+            return "error 'Invalid coupon code'";
+        }
+        if (coupon.isExpired()) {
+            return "error 'Coupon expired'";
+        }
         this.appliedCoupon = coupon;
+        return "Success";
     }
 
     public double calculateSubtotal() {
@@ -43,11 +69,34 @@ public class Cart {
         if (appliedCoupon == null) {
             return 0;
         }
-        return calculateSubtotal() * (appliedCoupon.getDiscountPercentage() / 100.0);
+        double subtotal = calculateSubtotal();
+        if (appliedCoupon.getType() == Coupon.DiscountType.PERCENTAGE) {
+            return Math.round(subtotal * (appliedCoupon.getDiscountValue() / 100.0) * 100.0) / 100.0;
+        } else {
+            return Math.min(subtotal, appliedCoupon.getDiscountValue());
+        }
+    }
+
+    public double calculateTax() {
+        double discountedSubtotal = calculateSubtotal() - calculateDiscount();
+        return Math.round(discountedSubtotal * 0.10 * 100.0) / 100.0;
     }
 
     public double calculateTotal() {
-        return calculateSubtotal() - calculateDiscount();
+        return calculateSubtotal() - calculateDiscount() + calculateTax();
+    }
+
+    public String checkout() {
+        if (items.isEmpty()) {
+            return "error 'Cart is empty'";
+        }
+        for (CartItem item : items) {
+            item.getProduct().reduceStock(item.getQuantity());
+        }
+        String receipt = generateReceipt();
+        items.clear();
+        appliedCoupon = null;
+        return receipt;
     }
 
     public String generateReceipt() {
@@ -69,6 +118,7 @@ public class Cart {
             receipt.append(String.format("Discount (%s):        -%10s\n", appliedCoupon.getCode(), Utils.formatCurrency(calculateDiscount())));
         }
         
+        receipt.append(String.format("Tax (10%%):              %10s\n", Utils.formatCurrency(calculateTax())));
         receipt.append("-----------------------------\n");
         receipt.append(String.format("Total:                  %10s\n", Utils.formatCurrency(calculateTotal())));
         receipt.append("=============================\n");

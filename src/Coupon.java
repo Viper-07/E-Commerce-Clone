@@ -1,17 +1,33 @@
 public class Coupon {
-    private String code;
-    private double discountPercentage;
+    public enum DiscountType {
+        PERCENTAGE, FLAT
+    }
 
-    public Coupon(String code, double discountPercentage) {
+    private String code;
+    private DiscountType type;
+    private double discountValue;
+    private boolean isExpired;
+
+    public Coupon(String code, DiscountType type, double discountValue, boolean isExpired) {
         this.code = code;
-        this.discountPercentage = discountPercentage;
+        this.type = type;
+        this.discountValue = discountValue;
+        this.isExpired = isExpired;
     }
 
     public String getCode() {
         return code;
     }
 
-    public double getDiscountPercentage() {
-        return discountPercentage;
+    public DiscountType getType() {
+        return type;
+    }
+
+    public double getDiscountValue() {
+        return discountValue;
+    }
+
+    public boolean isExpired() {
+        return isExpired;
     }
 }

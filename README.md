@@ -30,6 +30,7 @@ This application simulates a lightning-fast shopping cart experience entirely vi
 
 ```text
 Assignment_SangsaptakBanerjee/
+├── 📁 bin/                # Compiled Java class files (generated)
 ├── 📁 src/                # Core Java source files (Models, Cart logic, Utils)
 ├── 📁 data/               # CSV database files (1,000 products & coupons)
 ├── 📁 output/             # Generated checkout receipts
@@ -46,13 +47,13 @@ Assignment_SangsaptakBanerjee/
 ### ⚙️ Compilation
 Open your terminal, navigate to the root directory of the project, and compile the source code:
 ```bash
-javac src/*.java
+javac -d bin src/*.java
 ```
 
 ### ▶️ Execution
 Run the compiled `main` class:
 ```bash
-java -cp src main
+java -cp bin Main
 ```
 
 > ⚠️ **Important Note:** Ensure your terminal's current working directory is the root of the project so the application can correctly locate the `data/` and `output/` folders!

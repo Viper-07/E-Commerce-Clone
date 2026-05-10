@@ -14,19 +14,19 @@ public class FileHandler {
             String line = br.readLine(); // skip header
             while ((line = br.readLine()) != null) {
                 String[] data = line.split(",");
-                if (data.length >= 3) {
+                if (data.length >= 4) {
                     try {
                         String id = data[0].trim();
-                        // Auto-pad raw numbers into the PXXX format
                         if (id.matches("\\d+")) {
                             id = String.format("P%03d", Integer.parseInt(id));
                         }
                         
                         String name = data[1].trim();
-                        String category = data.length >= 4 ? data[2].trim() : "Misc"; 
-                        double price = data.length >= 4 ? Double.parseDouble(data[3].trim()) : Double.parseDouble(data[2].trim());
+                        String category = data[2].trim();
+                        double price = Double.parseDouble(data[3].trim());
+                        int stock = data.length >= 5 ? Integer.parseInt(data[4].trim()) : 100; // Default stock 100
                         
-                        products.add(new Product(id, name, category, price));
+                        products.add(new Product(id, name, category, price, stock));
                     } catch (NumberFormatException e) {
                         System.err.println("Warning: Skipping invalid product data row -> " + line);
                     }
@@ -47,9 +47,18 @@ public class FileHandler {
                 if (data.length >= 2) {
                     try {
                         String code = data[0].trim();
-                        double discount = Double.parseDouble(data[1].trim());
-                        coupons.add(new Coupon(code, discount));
-                    } catch (NumberFormatException e) {
+                        Coupon.DiscountType type = Coupon.DiscountType.PERCENTAGE;
+                        double value = Double.parseDouble(data[1].trim());
+                        boolean isExpired = false;
+
+                        if (data.length >= 4) {
+                            type = Coupon.DiscountType.valueOf(data[2].trim().toUpperCase());
+                            value = Double.parseDouble(data[3].trim());
+                            isExpired = Boolean.parseBoolean(data[4].trim());
+                        }
+                        
+                        coupons.add(new Coupon(code, type, value, isExpired));
+                    } catch (Exception e) {
                         System.err.println("Warning: Skipping invalid coupon data row -> " + line);
                     }
                 }
